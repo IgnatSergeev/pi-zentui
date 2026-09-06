@@ -36,6 +36,7 @@ import {
 	type SelectorBordersComponentConfig,
 	type SeparatorStyle,
 	saveAccentRailEditorStylePatch,
+	saveComponentPreset,
 	saveEditorComponentPatch,
 	saveExtensionStatusColorMode,
 	saveExtensionStatusDefaultPlacement,
@@ -74,6 +75,7 @@ import {
 } from "./interaction-summary";
 import { LiveContextController } from "./live-context";
 import { readPackageVersionResult } from "./package-version";
+import { getComponentPreset } from "./presets";
 import {
 	createProjectRefreshScheduler,
 	type ProjectRefreshRun,
@@ -1019,7 +1021,11 @@ export default function (pi: ExtensionAPI) {
 					!options.allowStaleZentui
 				) {
 					clearEditorOwnership();
-					return;
+					return {
+						ok: false,
+						reason:
+							"another Zentui instance is currently managing the editor; reload Pi to apply this change",
+					};
 				}
 				const editorMissingOrReplaced = !editorInstalled || !isOwnedEditorFactory(currentFactory);
 				if (editorMissingOrReplaced) return installEditor(ctx);
@@ -1219,10 +1225,43 @@ export default function (pi: ExtensionAPI) {
 	registerZentuiSettingsCommand(pi, {
 		sessionLifecycle,
 		getConfig: getCurrentConfig,
-		setEditorComponent(patch: Partial<EditorComponentConfig>, ctx: ExtensionContext) {
+		applyPreset(id, ctx, options) {
+			const preset = getComponentPreset(id);
+			if (!preset) throw new Error(`Unknown Zentui preset: ${id}`);
+			const previousFooterStyle = effectiveFooterStyle();
+			currentConfig = saveComponentPreset(preset);
+			if (!isTuiContext(ctx)) return { applied: true };
+			activeTheme = ctx.ui.theme;
+			const result = options?.deferEditor ? undefined : reconcileEditor(ctx);
+			if (currentConfig.components.editor.style !== "minimalist") {
+				setMinimalistDecorationActive(false);
+			}
+			reconcileUserMessages();
+			reconcileFooter(ctx);
+			reconcileProjectRefresh(ctx, effectiveFooterStyle() !== previousFooterStyle);
+			reconcileSessionTimer();
+			reconcileAgentTimer();
+			refresh();
+			return {
+				applied: !result || result.ok,
+				reason: result && !result.ok ? result.reason : undefined,
+			};
+		},
+		reconcilePresetEditor(ctx) {
+			if (!isTuiContext(ctx) || !sessionLifecycle.isCurrent()) return { applied: true };
+			const result = reconcileEditor(ctx);
+			reconcileProjectRefresh(ctx);
+			reconcileAgentTimer();
+			refresh();
+			return {
+				applied: !result || result.ok,
+				reason: result && !result.ok ? result.reason : undefined,
+			};
+		},
+		setEditorComponent(patch: Partial<EditorComponentConfig>, ctx: ExtensionContext, options) {
 			currentConfig = saveEditorComponentPatch(patch);
 			let result: EditorChangeResult | undefined;
-			if (patch.enabled !== undefined && isTuiContext(ctx)) {
+			if (patch.enabled !== undefined && isTuiContext(ctx) && !options?.deferEditor) {
 				result = reconcileEditor(ctx);
 			}
 			if (patch.style !== undefined && patch.style !== "minimalist") {
