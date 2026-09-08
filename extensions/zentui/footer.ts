@@ -40,6 +40,7 @@ import {
 } from "./format";
 import { resolveRuntimeSymbol } from "./icons";
 import type { LiveContextOverride } from "./live-context";
+import { buildPlanUsageParts } from "./plan-usage";
 import { type FooterState, modelLabelFor } from "./state";
 import { renderStyleForSource } from "./style";
 
@@ -317,6 +318,21 @@ export function installFooter(
 				const subscriptionLabel = state.subscription
 					? renderStyleForSource(theme, colorSource, config.colors.cost, "(sub)")
 					: "";
+				const planUsageLabel = buildPlanUsageParts(state.planUsage)
+					.map((part) => {
+						const partTier = contextColorTier(
+							part.percent,
+							config.components.footer.styles.starship.contextThresholds,
+						);
+						const partColor =
+							partTier === "error"
+								? config.colors.contextError
+								: partTier === "warning"
+									? config.colors.contextWarning
+									: config.colors.contextNormal;
+						return renderStyleForSource(theme, colorSource, partColor, part.text);
+					})
+					.join(" ");
 				const autoCompactionLabel = state.autoCompaction
 					? renderStyleForSource(theme, colorSource, contextColor, "(auto)")
 					: "";
@@ -451,6 +467,8 @@ export function installFooter(
 							return renderStyleForSource(theme, colorSource, config.colors.cost, state.costLabel);
 						case "subscription":
 							return subscriptionLabel;
+						case "plan_usage":
+							return planUsageLabel;
 						case "auto_compaction":
 							return autoCompactionLabel;
 						case "package":
@@ -676,6 +694,7 @@ export function installFooter(
 					config.components.footer.styles.starship.segments.context ? builtInContextLabel : "",
 					config.components.footer.styles.starship.segments.tokens ? builtInTokenLabel : "",
 					config.components.footer.styles.starship.segments.cost ? builtInCostLabel : "",
+					config.components.footer.styles.starship.segments.planUsage ? planUsageLabel : "",
 					timeSegment,
 				]
 					.filter(Boolean)

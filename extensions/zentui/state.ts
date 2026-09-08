@@ -12,6 +12,7 @@ import {
 } from "./format";
 import type { GitStatusSummary } from "./git";
 import type { PackageVersionResult } from "./package-version";
+import type { PlanUsage } from "./plan-usage";
 import type { RuntimeInfo } from "./runtime";
 import type { FooterTelemetry } from "./telemetry";
 
@@ -31,6 +32,7 @@ export type FooterState = GitStatusSummary & {
 	runtime?: RuntimeInfo;
 	packageVersion?: PackageVersionResult;
 	sessionStartEpoch?: number;
+	planUsage?: PlanUsage;
 };
 
 export function createInitialState(gitDefaults: GitStatusSummary): FooterState {
@@ -57,6 +59,7 @@ export function createInitialState(gitDefaults: GitStatusSummary): FooterState {
 		runtime: undefined,
 		packageVersion: undefined,
 		sessionStartEpoch: Date.now(),
+		planUsage: undefined,
 		...gitDefaults,
 	};
 }

@@ -107,6 +107,7 @@ export type FooterSegmentsConfig = {
 	time: boolean;
 	os: boolean;
 	packageVersion: boolean;
+	planUsage: boolean;
 };
 
 export type PolishedEditorStyleConfig = {
@@ -402,6 +403,7 @@ export const FOOTER_FORMAT_VARIABLES = [
 	"cache_write",
 	"cost",
 	"subscription",
+	"plan_usage",
 	"auto_compaction",
 	"package",
 	"package_version",
@@ -448,6 +450,7 @@ const defaultFooterSegments: FooterSegmentsConfig = {
 	time: false,
 	os: false,
 	packageVersion: false,
+	planUsage: true,
 };
 
 const DEFAULT_COMPLETION_MENU: CompletionMenuStyle = "palette";

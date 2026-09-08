@@ -75,6 +75,7 @@ import {
 } from "./interaction-summary";
 import { LiveContextController } from "./live-context";
 import { readPackageVersionResult } from "./package-version";
+import { subscribePlanUsage } from "./plan-usage";
 import { getComponentPreset } from "./presets";
 import {
 	createProjectRefreshScheduler,
@@ -347,6 +348,10 @@ export default function (pi: ExtensionAPI) {
 			cacheHitRate: state.usageTotals.latestCacheHitRate,
 		};
 	};
+	subscribePlanUsage(pi.events, (usage) => {
+		state.planUsage = usage;
+		refresh();
+	});
 	const getAgentDurationMs = () => agentDurationClock.elapsedMs();
 	const getThinkingLevel = () =>
 		sessionLifecycle.isCurrent() ? pi.getThinkingLevel() : ("off" as const);
