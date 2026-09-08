@@ -4018,7 +4018,7 @@ describe("Pi docs compliance", () => {
 		});
 		const rendered = footer?.render(180).join("\n") ?? "";
 
-		expect(rendered).toContain(" › left-status › left-status-2");
+		expect(rendered).toContain("left-status › left-status-2 › ");
 		expect(rendered).toContain("middle-status › middle-status-2");
 		expect(rendered).toContain("right-status");
 		expect(rendered).not.toContain("hidden-status");

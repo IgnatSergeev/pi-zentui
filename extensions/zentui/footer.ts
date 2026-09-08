@@ -166,7 +166,7 @@ function composeFooterContent(
 		remaining -= rightStatus ? rightConnectorWidth + visibleWidth(rightStatus) : 0;
 	}
 
-	const left = appendStatusArea(builtInLeft, leftStatus, separator);
+	const left = prependStatusArea(builtInLeft, leftStatus, separator);
 	const right = prependStatusArea(builtInRight, rightStatus, separator);
 	const gapWidth = Math.max(0, innerWidth - visibleWidth(left) - visibleWidth(right));
 	const middle = fitStatusTexts(extensionMiddle, gapWidth, separator);
@@ -748,7 +748,7 @@ export function installFooter(
 					return frameRows([renderLegacyContent()]);
 
 				const fullZones = {
-					left: appendStatusArea(
+					left: prependStatusArea(
 						contentLeft,
 						joinStatusTexts(extensionLeftSegments, separator),
 						separator,
