@@ -357,6 +357,27 @@ export function installFooter(
 				const statusBlock =
 					allStatus || aheadBehind ? gitStatusColor(`[${allStatus}${aheadBehind}]`) : "";
 				const gitStateBlock = gitStateLabel ? gitStatusColor(gitStateLabel) : "";
+				const gitBranchStateColor =
+					state.untracked > 0
+						? config.colors.gitBranchUntracked
+						: state.modified > 0 ||
+								state.deleted > 0 ||
+								state.renamed > 0 ||
+								state.typechanged > 0 ||
+								state.conflicted > 0 ||
+								state.staged > 0
+							? config.colors.gitBranchDirty
+							: state.ahead > 0 || state.behind > 0
+								? config.colors.gitBranchDiverged
+								: config.colors.gitBranchClean;
+				const gitBranchStateSuffix =
+					state.ahead > 0 && state.behind > 0
+						? ` ↑${state.ahead} ↓${state.behind}`
+						: state.ahead > 0
+							? ` ↑${state.ahead}`
+							: state.behind > 0
+								? ` ↓${state.behind}`
+								: "";
 				const renderVariable = (name: string): string => {
 					const canonical = FOOTER_FORMAT_ALIASES[name] ?? name;
 					switch (canonical) {
@@ -364,12 +385,11 @@ export function installFooter(
 							return cwdLabel;
 						case "session_name":
 							return sessionNameLabel;
-						case "git_branch":
-							return branchText
-								? gitIcon
-									? `${gitIcon} ${gitColor(branchText)}`
-									: gitColor(branchText)
-								: "";
+						case "git_branch": {
+							if (!branchText) return "";
+							const label = `${config.icons.git ? `${config.icons.git} ` : ""}${branchText}${gitBranchStateSuffix}`;
+							return renderStyleForSource(theme, colorSource, gitBranchStateColor, label);
+						}
 						case "git_status":
 							return statusBlock;
 						case "git_state":

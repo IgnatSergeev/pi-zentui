@@ -98,7 +98,7 @@ function renderFramed({ text, width, theme, config }: UserMessageStyleRenderInpu
 		return truncateToWidth(`${rail}${fillLine(line, available)}`, width, "");
 	};
 	const rule = truncateToWidth(border(theme, config, "─".repeat(width)), width, "");
-	return [rule, row(""), ...body.map(row), row(""), rule];
+	return [rule, ...body.map(row), rule];
 }
 
 function renderFramedCopyFriendly({

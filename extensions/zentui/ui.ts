@@ -842,17 +842,17 @@ export function renderPolishedEditorFrame({
 					ownedBackground: false,
 				})
 			: autocompleteLines;
-	const lines = ["", ...editorLines, "", railedMeta];
+	const hasRailedMeta = visibleWidth(railedMeta) > 0;
+	const hasLowRailMeta = visibleWidth(lowRailMeta) > 0;
+	const lines = [...editorLines, ...(hasRailedMeta ? [railedMeta] : [])];
 	const renderedLines = isLowRailPolishedStyle(config.components.editor.style)
 		? [
 				top,
-				"",
 				...editorLines.map(
 					(line, index) =>
 						`${index === 0 ? prompt : lowRailContinuation}${fillLine(line, innerWidth)}`,
 				),
-				"",
-				` ${truncateToWidth(lowRailMeta, Math.max(0, width - 1), "")}`,
+				...(hasLowRailMeta ? [` ${truncateToWidth(lowRailMeta, Math.max(0, width - 1), "")}`] : []),
 				bottom,
 				...completionLines,
 			]

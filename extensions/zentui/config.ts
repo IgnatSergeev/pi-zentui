@@ -313,6 +313,10 @@ export type PolishedTuiColors = {
 	sessionName: ColorSpec;
 	gitBranch: ColorSpec;
 	gitStatus: ColorSpec;
+	gitBranchClean: ColorSpec;
+	gitBranchDirty: ColorSpec;
+	gitBranchUntracked: ColorSpec;
+	gitBranchDiverged: ColorSpec;
 	contextNormal: ColorSpec;
 	contextWarning: ColorSpec;
 	contextError: ColorSpec;
@@ -538,6 +542,10 @@ export const defaultConfig: PolishedTuiConfig = {
 		sessionName: "bold green",
 		gitBranch: "bold purple",
 		gitStatus: "bold red",
+		gitBranchClean: "bold green",
+		gitBranchDirty: "bold yellow",
+		gitBranchUntracked: "bold red",
+		gitBranchDiverged: "bold cyan",
 		contextNormal: "bright-black",
 		contextWarning: "bold yellow",
 		contextError: "bold red",
@@ -739,6 +747,10 @@ function normalizeColors(record: Record<string, unknown>): Partial<PolishedTuiCo
 		sessionName: colorValue(record, "sessionName"),
 		gitBranch: colorValue(record, "gitBranch") ?? colorValue(record, "git"),
 		gitStatus: colorValue(record, "gitStatus"),
+		gitBranchClean: colorValue(record, "gitBranchClean"),
+		gitBranchDirty: colorValue(record, "gitBranchDirty"),
+		gitBranchUntracked: colorValue(record, "gitBranchUntracked"),
+		gitBranchDiverged: colorValue(record, "gitBranchDiverged"),
 		contextNormal: colorValue(record, "contextNormal"),
 		contextWarning: colorValue(record, "contextWarning"),
 		contextError: colorValue(record, "contextError"),
