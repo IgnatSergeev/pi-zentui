@@ -1037,6 +1037,10 @@ function parseNonEmptyString(value: unknown, fallback: string): string {
 	return typeof value === "string" && value.length > 0 ? value : fallback;
 }
 
+function parseMetadataFormat(value: unknown, fallback: string): string {
+	return typeof value === "string" ? value : fallback;
+}
+
 function resolveContextThresholds(
 	canonical: unknown,
 	legacy: unknown,
@@ -1268,11 +1272,11 @@ function resolveComponents(config: ConfigRecord): ComponentsConfig {
 			),
 			styles: {
 				opencode: {
-					metadataFormat: parseNonEmptyString(metadataFormat, DEFAULT_EDITOR_METADATA_FORMAT),
+					metadataFormat: parseMetadataFormat(metadataFormat, DEFAULT_EDITOR_METADATA_FORMAT),
 					completionMenu: parseCompletionMenuStyle(opencode.completionMenu),
 				},
 				"opencode-copy-friendly": {
-					metadataFormat: parseNonEmptyString(
+					metadataFormat: parseMetadataFormat(
 						lowRailMetadataFormat,
 						DEFAULT_EDITOR_METADATA_FORMAT,
 					),
