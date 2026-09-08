@@ -113,7 +113,7 @@ function renderFramedCopyFriendly({
 		fillLine(`${prefix}${line}`, width),
 	);
 	const rule = truncateToWidth(border(theme, config, "─".repeat(width)), width, "");
-	return [rule, "", ...body, "", rule];
+	return [rule, ...body, rule];
 }
 
 function renderCompact({ text, width, theme, config }: UserMessageStyleRenderInput): string[] {
